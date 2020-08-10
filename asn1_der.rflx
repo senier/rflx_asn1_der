@@ -55,6 +55,10 @@ package ASN1_DER is
             then Unused
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_BIT_STRING
+            then Data
+               with Length => 8 * Length
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_OCTET_STRING
             then null
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
@@ -71,7 +75,13 @@ package ASN1_DER is
             then null
                --  Are BIT STRINGs allowed to have zero length?
                if Length = 1;
-         Data   : Byte_Array;
+         Data   : Byte_Array
+            then Last
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_BIT_STRING
+            then null
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_OCTET_STRING;
          Last   : Byte;
       end message;
 

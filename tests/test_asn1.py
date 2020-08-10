@@ -23,3 +23,9 @@ def test_parse_bit_string() -> None:
     assert message.get("Unused") == 6
     assert [d.value for d in message.get("Data")] == [0x6E, 0x5D]
     assert message.get("Last") == 0xC0
+
+
+def test_parse_octet_string() -> None:
+    message = ASN1["Message"]
+    message.parse(bytes([0x04, 0x04, 0x03, 0x02, 0x06, 0xA0]))
+    assert [d.value for d in message.get("Data")] == [0x03, 0x02, 0x06, 0xA0]
