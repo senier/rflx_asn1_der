@@ -38,15 +38,41 @@ package ASN1_DER is
       end message;
 
    type Length is range 0 .. 127 with Size => 8;
+   type Integer is mod 2**7;
+   type Unused is range 0 .. 7 with Size => 8;
+
+   type Byte is mod 2**8;
+   type Byte_Array is array of Byte;
 
    type Message is
       message
          Tag    : Tag;
          Length : Length
+            then Negative
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_INTEGER
+                  and Length = 1
+            then Unused
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_BIT_STRING
             then null
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
                   and Length = 0;
+         Negative : Boolean;
+         Integer : Integer
+            then null;
+         Unused : Unused
+            then Data
+               with Length => 8 * (Length - 2)
+               if Length > 2
+            then Last
+               if Length = 2
+            then null
+               --  Are BIT STRINGs allowed to have zero length?
+               if Length = 1;
+         Data   : Byte_Array;
+         Last   : Byte;
       end message;
 
 end ASN1_DER;
