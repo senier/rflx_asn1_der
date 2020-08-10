@@ -1,0 +1,52 @@
+package ASN1_DER is
+
+   type Tag_Universal is
+      (UT_INTEGER           => 16#02#,
+       UT_BIT_STRING        => 16#03#,
+       UT_OCTET_STRING      => 16#04#,
+       UT_NULL              => 16#05#,
+       UT_OBJECT_IDENTIFIER => 16#06#,
+       UT_UTF8String        => 16#0C#,
+       UT_SEQUENCE          => 16#10#,
+       UT_SET               => 16#11#,
+       UT_PrintableString   => 16#13#,
+       UT_IA5String         => 16#16#,
+       UT_UTCTime           => 16#17#,
+       UT_GeneralizedTime   => 16#18#) with Size => 5;
+
+   type Tag_Raw is mod 2**5;
+
+   type Tag_Class is
+      (Cl_Universal        => 0,
+       Cl_Application      => 1,
+       Cl_Context_Specific => 2,
+       Cl_Private          => 3) with Size => 2;
+
+   type Tag is
+      message
+         Class : Tag_Class;
+         Constructed : Boolean
+            then Universal
+               if Class = Cl_Universal
+            then Raw
+               if Class /= Cl_Universal;
+         Raw : Tag_Raw
+            then null;
+         Universal : Tag_Universal
+            then null
+               if (Universal /= UT_SEQUENCE and Universal /= UT_SET) or Constructed = True;
+      end message;
+
+   type Length is range 0 .. 127 with Size => 8;
+
+   type Message is
+      message
+         Tag    : Tag;
+         Length : Length
+            then null
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_NULL
+                  and Length = 0;
+      end message;
+
+end ASN1_DER;
