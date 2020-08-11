@@ -38,17 +38,23 @@ package ASN1_DER is
       end message;
 
    type Length is range 0 .. 127 with Size => 8;
-   type Integer is mod 2**7;
    type Unused is range 0 .. 7 with Size => 8;
 
    type Byte is mod 2**8;
    type Byte_Array is array of Byte;
 
+   type Value is mod 2**7;
+   type Integer is
+      message
+         Flag : Boolean;
+         Value : Value;
+      end message;
+
    type Message is
       message
          Tag    : Tag;
          Length : Length
-            then Negative
+            then Integer
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_INTEGER
                   and Length = 1
@@ -63,7 +69,6 @@ package ASN1_DER is
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
                   and Length = 0;
-         Negative : Boolean;
          Integer : Integer
             then null;
          Unused : Unused

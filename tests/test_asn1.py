@@ -14,9 +14,8 @@ def test_parse_null() -> None:
 def test_parse_integer() -> None:
     message = ASN1["Message"]
     message.parse(bytes([2, 1, 47]))
-    result = message.get("Negative")
-    assert result == "False"
-    assert message.get("Integer") == 47
+    assert message.get("Integer_Flag") == "False"
+    assert message.get("Integer_Value") == 47
 
 
 def test_parse_bit_string() -> None:
