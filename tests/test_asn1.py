@@ -1,3 +1,5 @@
+import pytest
+
 from rflx.pyrflx import PyRFLX
 
 SPECS = PyRFLX(["asn1_der.rflx"], True)
@@ -23,6 +25,13 @@ def test_parse_bit_string() -> None:
     assert message.get("Unused") == 6
     assert [d.value for d in message.get("Data")] == [0x6E, 0x5D]
     assert message.get("Last") == 0xC0
+
+
+@pytest.mark.skip(reason="ISSUE: Componolit/RecordFlux#")
+def test_parse_bit_string_invalid_unused() -> None:
+    message = ASN1["Message"]
+    with pytest.raises(ValueError):
+        message.parse(bytes([0x03, 0x04, 0x06, 0x6E, 0x5D, 0xC1]))
 
 
 def test_parse_octet_string() -> None:
