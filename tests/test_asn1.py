@@ -111,3 +111,97 @@ def test_parse_invalid_utctime() -> None:
         with pytest.raises(ValueError):
             print(f"{m}: {i}")
             message.parse(i.encode("ascii"))
+
+
+def test_parse_generalizedtime() -> None:
+    message = ASN1["GeneralizedTime"]
+    date = "18860923175628Z"
+    message.parse(date.encode("ascii"))
+    fields = [
+        "G_Century_H",
+        "G_Century_L",
+        "G_Year_H",
+        "G_Year_L",
+        "G_Month_H",
+        "G_Month_L",
+        "G_Day_H",
+        "G_Day_L",
+        "G_Hour_H",
+        "G_Hour_L",
+        "G_Minute_H",
+        "G_Minute_L",
+        "G_Second_H",
+        "G_Second_L",
+        "G_Zulu",
+    ]
+    assert [message.get(f) for f in fields] == [ord(d) for d in date]
+
+
+def test_parse_invalid_generalizedtime() -> None:
+    message = ASN1["GeneralizedTime"]
+    invalid = [
+        ("21860923175628X", 'no "Z" prefix'),
+        ("21221323175628Z", "month too large #1"),
+        ("21222023175628Z", "month too large #2"),
+        ("21229923175628Z", "month too large #3"),
+        ("21220023175628Z", "month too small"),
+        ("21220832175628Z", "day too large"),
+        ("21221000175628Z", "day too small"),
+        ("21220815255628Z", "hour too large"),
+        ("21220815176028Z", "minute too large #1"),
+        ("21220815177028Z", "minute too large #2"),
+        ("21220815179928Z", "minute too large #3"),
+        ("21220815173060Z", "second too large #1"),
+        ("21220815173061Z", "second too large #2"),
+        ("21220815173999Z", "second too large #3"),
+    ]
+    for i, m in invalid:
+        with pytest.raises(ValueError):
+            print(f"{m}: {i}")
+            message.parse(i.encode("ascii"))
+
+
+def test_parse_utctime_message() -> None:
+    message = ASN1["Message"]
+    date = "860923175628Z"
+    message.parse(bytes([0x17, len(date)]) + date.encode("ascii"))
+    fields = [
+        "UTCTime_Year_H",
+        "UTCTime_Year_L",
+        "UTCTime_Month_H",
+        "UTCTime_Month_L",
+        "UTCTime_Day_H",
+        "UTCTime_Day_L",
+        "UTCTime_Hour_H",
+        "UTCTime_Hour_L",
+        "UTCTime_Minute_H",
+        "UTCTime_Minute_L",
+        "UTCTime_Second_H",
+        "UTCTime_Second_L",
+        "UTCTime_Zulu",
+    ]
+    assert [message.get(f) for f in fields] == [ord(d) for d in date]
+
+
+def test_parse_generalizedtime_message() -> None:
+    message = ASN1["Message"]
+    date = "15860923175628Z"
+    message.parse(bytes([0x18, len(date)]) + date.encode("ascii"))
+    fields = [
+        "GeneralizedTime_G_Century_H",
+        "GeneralizedTime_G_Century_L",
+        "GeneralizedTime_G_Year_H",
+        "GeneralizedTime_G_Year_L",
+        "GeneralizedTime_G_Month_H",
+        "GeneralizedTime_G_Month_L",
+        "GeneralizedTime_G_Day_H",
+        "GeneralizedTime_G_Day_L",
+        "GeneralizedTime_G_Hour_H",
+        "GeneralizedTime_G_Hour_L",
+        "GeneralizedTime_G_Minute_H",
+        "GeneralizedTime_G_Minute_L",
+        "GeneralizedTime_G_Second_H",
+        "GeneralizedTime_G_Second_L",
+        "GeneralizedTime_G_Zulu",
+    ]
+    assert [message.get(f) for f in fields] == [ord(d) for d in date]

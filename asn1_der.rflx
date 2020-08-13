@@ -96,6 +96,12 @@ package ASN1_DER is
          Zulu : Zulu;
       end message;
 
+   type GeneralizedTime is
+      message
+         G_Century : Number;
+         G : UTCTime;
+      end message;
+
    type Message is
       message
          Tag    : Tag;
@@ -114,7 +120,15 @@ package ASN1_DER is
             then null
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
-                  and Length = 0;
+                  and Length = 0
+            then UTCTime
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_UTCTime
+                  and Length = 13
+            then GeneralizedTime
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_GeneralizedTime
+                  and Length = 15;
          Integer : Integer_Chunk
             then null;
          Unused : Unused
@@ -124,7 +138,12 @@ package ASN1_DER is
             then null
                --  Are BIT STRINGs allowed to have zero length?
                if Length = 1;
-         Data : Byte_Array;
+         Data : Byte_Array
+            then null;
+         UTCTime : UTCTime
+            then null;
+         GeneralizedTime : GeneralizedTime
+            then null;
       end message;
 
 end ASN1_DER;
