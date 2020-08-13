@@ -63,6 +63,39 @@ package ASN1_DER is
    --    end message;
    -- for Integer_List use (Next => Integer_Chunk);
 
+   type Digit is range 48 .. 57 with Size => 8;
+   type Zulu is range 90 .. 90 with Size => 8;
+
+   type Number is
+      message
+         H : Digit;
+         L : Digit;
+      end message;
+
+   type UTCTime is
+      message
+         Year : Number;
+         Month : Number
+            then Day
+               if 10 * (Month_H - 48) + (Month_L - 48) < 13
+                  and 10 * (Month_H - 48) + (Month_L - 48) > 0;
+         Day : Number
+            then Hour
+               --  FIXME: Actual days of month not considered
+               if 10 * (Day_H - 48) + (Day_L - 48) < 32
+                  and 10 * (Day_H - 48) + (Day_L - 48) > 0;
+         Hour : Number
+            then Minute
+               if 10 * (Hour_H - 48) + (Hour_L - 48) < 24;
+         Minute : Number
+            then Second
+               if 10 * (Minute_H - 48) + (Minute_L - 48) < 60;
+         Second : Number
+            then Zulu
+               if 10 * (Second_H - 48) + (Second_L - 48) < 60;
+         Zulu : Zulu;
+      end message;
+
    type Message is
       message
          Tag    : Tag;

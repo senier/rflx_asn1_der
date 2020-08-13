@@ -55,3 +55,49 @@ def test_parse_integers() -> None:
     m1 = ASN1["Integer_List"]
     m1.parse(bytes([0x90, 0xA0, 0xB0, 0xC0, 0x50]))
     assert list(value(m1)) == [0x10, 0x20, 0x30, 0x40, 0x50]
+
+
+def test_parse_utctime() -> None:
+    message = ASN1["UTCTime"]
+    date = "860923175628Z"
+    message.parse(date.encode("ascii"))
+    fields = [
+        "Year_H",
+        "Year_L",
+        "Month_H",
+        "Month_L",
+        "Day_H",
+        "Day_L",
+        "Hour_H",
+        "Hour_L",
+        "Minute_H",
+        "Minute_L",
+        "Second_H",
+        "Second_L",
+        "Zulu",
+    ]
+    assert [message.get(f) for f in fields] == [ord(d) for d in date]
+
+
+def test_parse_invalid_utctime() -> None:
+    message = ASN1["UTCTime"]
+    invalid = [
+        ("860923175628X", 'no "Z" prefix'),
+        ("221323175628Z", "month too large #1"),
+        ("222023175628Z", "month too large #2"),
+        ("229923175628Z", "month too large #3"),
+        ("220023175628Z", "month too small"),
+        ("220832175628Z", "day too large"),
+        ("221000175628Z", "day too small"),
+        ("220815255628Z", "hour too large"),
+        ("220815176028Z", "minute too large #1"),
+        ("220815177028Z", "minute too large #2"),
+        ("220815179928Z", "minute too large #3"),
+        ("220815173060Z", "second too large #1"),
+        ("220815173061Z", "second too large #2"),
+        ("220815173999Z", "second too large #3"),
+    ]
+    for i, m in invalid:
+        with pytest.raises(ValueError):
+            print(f"{m}: {i}")
+            message.parse(i.encode("ascii"))
