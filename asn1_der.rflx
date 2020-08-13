@@ -50,17 +50,18 @@ package ASN1_DER is
          Value : Value;
       end message;
 
-   type Integer_List is
-      message
-         Chunk : Integer_Chunk
-            then Next
-               with Length => Message'Length - 8
-               if Chunk_Flag = True
-            then null
-               if Chunk_Flag = False;
-         Next : Opaque;
-      end message;
-   for Integer_List use (Next => Integer_Chunk);
+   -- ISSUE: Componolit/RecordFlux#401
+   -- type Integer_List is
+   --    message
+   --       Chunk : Integer_Chunk
+   --          then Next
+   --             with Length => Message'Length - 8
+   --             if Chunk_Flag = True
+   --          then null
+   --             if Chunk_Flag = False;
+   --       Next : Opaque;
+   --    end message;
+   -- for Integer_List use (Next => Integer_Chunk);
 
    type Message is
       message
@@ -81,7 +82,7 @@ package ASN1_DER is
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
                   and Length = 0;
-         Integer : Integer_List
+         Integer : Integer_Chunk
             then null;
          Unused : Unused
             then Data

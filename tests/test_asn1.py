@@ -38,6 +38,7 @@ def test_parse_octet_string() -> None:
     assert [d.value for d in message.get("Data")] == [0x03, 0x02, 0x06, 0xA0]
 
 
+@pytest.mark.skip(reason="ISSUE: Componolit/RecordFlux#401")
 def test_parse_integers() -> None:
     def value(message: MessageValue) -> int:
         m = message
