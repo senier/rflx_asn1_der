@@ -117,6 +117,8 @@ package ASN1_DER is
                with Length => 8 * Length
                if Tag_Class = Cl_Universal
                   and (Tag_Universal = UT_OCTET_STRING
+                       or Tag_Universal = UT_SEQUENCE
+                       or Tag_Universal = UT_SET
                         -- Handled as Opaque and not checked for compliance for now
                         -- ISSUE: Componolit/RecordFlux#78
                        or Tag_Universal = UT_UTF8String

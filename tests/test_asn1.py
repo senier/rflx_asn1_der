@@ -183,6 +183,27 @@ def test_parse_utctime_message() -> None:
     assert [message.get(f) for f in fields] == [ord(d) for d in date]
 
 
+def test_parse_utctime_message2() -> None:
+    message = ASN1["Message"]
+    data = bytes(
+        [0x17, 0x0D, 0x31, 0x39, 0x31, 0x32, 0x31, 0x36, 0x30, 0x33, 0x30, 0x32, 0x31, 0x30, 0x5A]
+    )
+    message.parse(data)
+    assert message.get("UTCTime_Year_H") == ord("1")
+    assert message.get("UTCTime_Year_L") == ord("9")
+    assert message.get("UTCTime_Month_H") == ord("1")
+    assert message.get("UTCTime_Month_L") == ord("2")
+    assert message.get("UTCTime_Day_H") == ord("1")
+    assert message.get("UTCTime_Day_L") == ord("6")
+    assert message.get("UTCTime_Hour_H") == ord("0")
+    assert message.get("UTCTime_Hour_L") == ord("3")
+    assert message.get("UTCTime_Minute_H") == ord("0")
+    assert message.get("UTCTime_Minute_L") == ord("2")
+    assert message.get("UTCTime_Second_H") == ord("1")
+    assert message.get("UTCTime_Second_L") == ord("0")
+    assert message.get("UTCTime_Zulu") == ord("Z")
+
+
 def test_parse_generalizedtime_message() -> None:
     message = ASN1["Message"]
     date = "15860923175628Z"
