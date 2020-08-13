@@ -1,3 +1,5 @@
+from typing import Generator
+
 import pytest
 
 from rflx.pyrflx import MessageValue, PyRFLX
@@ -22,7 +24,9 @@ def test_parse_bit_string() -> None:
     message = ASN1["Message"]
     message.parse(bytes([0x03, 0x04, 0x06, 0x6E, 0x5D, 0xC0]))
     assert message.get("Unused") == 6
-    assert [d.value for d in message.get("Data")] == [0x6E, 0x5D, 0xC0]
+    data = message.get("Data")
+    assert isinstance(data, list)
+    assert [d.value for d in data] == [0x6E, 0x5D, 0xC0]
 
 
 @pytest.mark.skip(reason="ISSUE: Componolit/RecordFlux#")
@@ -35,18 +39,24 @@ def test_parse_bit_string_invalid_unused() -> None:
 def test_parse_octet_string() -> None:
     message = ASN1["Message"]
     message.parse(bytes([0x04, 0x04, 0x03, 0x02, 0x06, 0xA0]))
-    assert [d.value for d in message.get("Data")] == [0x03, 0x02, 0x06, 0xA0]
+    data = message.get("Data")
+    assert isinstance(data, list)
+    assert [d.value for d in data] == [0x03, 0x02, 0x06, 0xA0]
 
 
 @pytest.mark.skip(reason="ISSUE: Componolit/RecordFlux#401")
 def test_parse_integers() -> None:
-    def value(message: MessageValue) -> int:
-        m = message
+    def value(message: MessageValue) -> Generator[int, None, None]:
+        m: MessageValue = message
         while True:
-            yield m.get("Chunk_Value")
+            result = m.get("Chunk_Value")
+            assert isinstance(result, int)
+            yield result
             if m.get("Chunk_Flag") == "False":
                 break
-            m = m.get("Next")
+            nxt = m.get("Next")
+            assert isinstance(nxt, MessageValue)
+            m = nxt
 
     m1 = ASN1["Integer_List"]
     m1.parse(bytes([0x82, 0x42]))

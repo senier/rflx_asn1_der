@@ -17,7 +17,7 @@ check_pylint:
 	pylint $(python-packages)
 
 check_mypy:
-	#mypy --pretty $(python-packages)
+	mypy --pretty $(python-packages)
 
 check_contracts:
 	pyicontract-lint $(python-packages)
