@@ -116,11 +116,23 @@ package ASN1_DER is
             then Data
                with Length => 8 * Length
                if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_OCTET_STRING
+                  and (Tag_Universal = UT_OCTET_STRING
+                        -- Handled as Opaque and not checked for compliance for now
+                        -- ISSUE: Componolit/RecordFlux#78
+                       or Tag_Universal = UT_UTF8String
+                       or Tag_Universal = UT_PrintableString
+                       or Tag_Universal = UT_IA5String)
             then null
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_NULL
                   and Length = 0
+            then Data
+               -- Handled as Opaque for now
+               -- ISSUE: Componolit/RecordFlux#401
+               -- ISSUE: Componolit/RecordFlux#8
+               with Length => 8 * Length
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_OBJECT_IDENTIFIER
             then UTCTime
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_UTCTime

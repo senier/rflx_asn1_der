@@ -205,3 +205,21 @@ def test_parse_generalizedtime_message() -> None:
         "GeneralizedTime_G_Zulu",
     ]
     assert [message.get(f) for f in fields] == [ord(d) for d in date]
+
+
+def test_parse_strings() -> None:
+    def assert_string(message: MessageValue, encoding: str, expected: str) -> None:
+        data = message.get("Data")
+        assert isinstance(data, list)
+        assert [d.value for d in data] == list(expected.encode(encoding))
+
+    message = ASN1["Message"]
+
+    message.parse(bytes([0x13, 0x02, 0x68, 0x69]))
+    assert_string(message, "ascii", "hi")
+
+    message.parse(bytes([0x16, 0x02, 0x68, 0x69]))
+    assert_string(message, "ascii", "hi")
+
+    message.parse(bytes([0x0C, 0x04, 0xF0, 0x9F, 0x98, 0x8E]))
+    assert_string(message, "utf-8", "😎")
