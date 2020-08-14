@@ -1,7 +1,8 @@
 package ASN1_DER is
 
    type Tag_Universal is
-      (UT_INTEGER           => 16#02#,
+      (UT_BOOLEAN           => 16#01#,
+       UT_INTEGER           => 16#02#,
        UT_BIT_STRING        => 16#03#,
        UT_OCTET_STRING      => 16#04#,
        UT_NULL              => 16#05#,
@@ -102,10 +103,16 @@ package ASN1_DER is
          G : UTCTime;
       end message;
 
+   type Bool is (B_FALSE => 0, B_TRUE => 16#FF#) with Size => 8;
+
    type Message is
       message
          Tag    : Tag;
          Length : Length
+            then Bool
+               if Tag_Class = Cl_Universal
+                  and Tag_Universal = UT_BOOLEAN
+                  and Length = 1
             then Integer
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_INTEGER
@@ -143,6 +150,8 @@ package ASN1_DER is
                if Tag_Class = Cl_Universal
                   and Tag_Universal = UT_GeneralizedTime
                   and Length = 15;
+         Bool : Bool
+            then null;
          Integer : Integer_Chunk
             then null;
          Unused : Unused

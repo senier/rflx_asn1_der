@@ -244,3 +244,13 @@ def test_parse_strings() -> None:
 
     message.parse(bytes([0x0C, 0x04, 0xF0, 0x9F, 0x98, 0x8E]))
     assert_string(message, "utf-8", "😎")
+
+
+def test_parse_boolean() -> None:
+    message = ASN1["Message"]
+    message.parse(bytes([1, 1, 0]))
+    assert message.get("Bool") == "B_FALSE"
+    message.parse(bytes([1, 1, 0xFF]))
+    assert message.get("Bool") == "B_TRUE"
+    with pytest.raises(ValueError):
+        message.parse(bytes([1, 1, 0x14]))
