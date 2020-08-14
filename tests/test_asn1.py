@@ -4,8 +4,8 @@ import pytest
 
 from rflx.pyrflx import MessageValue, PyRFLX
 
-SPECS = PyRFLX(["asn1_der.rflx"], True)
-ASN1 = SPECS["ASN1_DER"]
+SPECS = PyRFLX(["asn1.rflx"], True)
+ASN1 = SPECS["ASN1"]
 
 
 def test_parse_null() -> None:

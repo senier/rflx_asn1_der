@@ -1,4 +1,4 @@
-package ASN1_DER is
+package ASN1 is
 
    type Tag_Universal is
       (UT_BOOLEAN           => 16#01#,
@@ -169,4 +169,4 @@ package ASN1_DER is
             then null;
       end message;
 
-end ASN1_DER;
+end ASN1;
