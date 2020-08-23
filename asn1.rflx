@@ -97,7 +97,7 @@ package ASN1 is
          Zulu : Zulu;
       end message;
 
-   type UTCTime is
+   type UNTAGGED_UTCTime is
       message
          Length : Length
             then U
@@ -105,13 +105,29 @@ package ASN1 is
          U : Base_Time;
       end message;
 
-   type GeneralizedTime is
+   type UTCTime is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_UTCTime;
+         T : UNTAGGED_UTCTime;
+      end message;
+
+   type UNTAGGED_GeneralizedTime is
       message
          Length : Length
             then G_Century
                if Length = 15;
          G_Century : Number;
          G : Base_Time;
+      end message;
+
+   type GeneralizedTime is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_GeneralizedTime;
+         T : UNTAGGED_GeneralizedTime;
       end message;
 
    type Bool_Value is (B_FALSE => 0, B_TRUE => 16#FF#) with Size => 8;
