@@ -14,10 +14,15 @@ def test_parse_null() -> None:
 
 
 def test_parse_integer() -> None:
-    message = ASN1["INTEGER"]
+    message = ASN1["UNTAGGED_INTEGER"]
     message.parse(bytes([1, 47]))
     assert message.get("Integer_Flag") == "False"
     assert message.get("Integer_Value") == 47
+
+    message = ASN1["INTEGER"]
+    message.parse(bytes([2, 1, 47]))
+    assert message.get("T_Integer_Flag") == "False"
+    assert message.get("T_Integer_Value") == 47
 
 
 def test_parse_bit_string() -> None:

@@ -161,7 +161,7 @@ package ASN1 is
                if Length = 0;
       end message;
 
-   type INTEGER is
+   type UNTAGGED_INTEGER is
       message
          Length : Length
             then Integer
@@ -172,6 +172,14 @@ package ASN1 is
          Integer : Integer_Chunk
             then null;
          Raw : Opaque;
+      end message;
+
+   type INTEGER is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_INTEGER;
+         T : UNTAGGED_INTEGER;
       end message;
 
    type PrintableString is
