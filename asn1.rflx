@@ -183,7 +183,7 @@ package ASN1 is
          T : UNTAGGED_OCTET_STRING;
       end message;
 
-   type OBJECT_IDENTIFIER is
+   type UNTAGGED_OBJECT_IDENTIFIER is
       message
          Length : Length
             then Value
@@ -194,11 +194,27 @@ package ASN1 is
          Value : Byte_Array;
       end message;
 
-   type NUL is
+   type OBJECT_IDENTIFIER is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_OBJECT_IDENTIFIER;
+         T : UNTAGGED_OBJECT_IDENTIFIER;
+      end message;
+
+   type UNTAGGED_NULL is
       message
          Length : Length
             then null
                if Length = 0;
+      end message;
+
+   type NUL is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_NULL;
+         T : UNTAGGED_NULL;
       end message;
 
    type UNTAGGED_INTEGER is

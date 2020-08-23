@@ -9,8 +9,11 @@ ASN1 = SPECS["ASN1"]
 
 
 def test_parse_null() -> None:
-    message = ASN1["NUL"]
+    message = ASN1["UNTAGGED_NULL"]
     message.parse(bytes([0]))
+
+    message = ASN1["NUL"]
+    message.parse(bytes([5, 0]))
 
 
 def test_parse_integer() -> None:
