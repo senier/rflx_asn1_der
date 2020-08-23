@@ -147,7 +147,7 @@ package ASN1 is
          T : UNTAGGED_BOOL;
       end message;
 
-   type BIT_STRING is
+   type UNTAGGED_BIT_STRING is
       message
          Length : Length;
          Unused : Unused
@@ -157,6 +157,14 @@ package ASN1 is
             then null
                if Length = 1;
          Value : Byte_Array;
+      end message;
+
+   type BIT_STRING is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_BIT_STRING;
+         T : UNTAGGED_BIT_STRING;
       end message;
 
    type OCTET_STRING is

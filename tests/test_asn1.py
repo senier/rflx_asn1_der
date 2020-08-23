@@ -26,17 +26,24 @@ def test_parse_integer() -> None:
 
 
 def test_parse_bit_string() -> None:
-    message = ASN1["BIT_STRING"]
+    message = ASN1["UNTAGGED_BIT_STRING"]
     message.parse(bytes([0x04, 0x06, 0x6E, 0x5D, 0xC0]))
     assert message.get("Unused") == 6
     data = message.get("Value")
     assert isinstance(data, list)
     assert [d.value for d in data] == [0x6E, 0x5D, 0xC0]
 
+    message = ASN1["BIT_STRING"]
+    message.parse(bytes([0x03, 0x04, 0x06, 0x6E, 0x5D, 0xC0]))
+    assert message.get("T_Unused") == 6
+    data = message.get("T_Value")
+    assert isinstance(data, list)
+    assert [d.value for d in data] == [0x6E, 0x5D, 0xC0]
+
 
 @pytest.mark.skip(reason="ISSUE: Componolit/RecordFlux#")
 def test_parse_bit_string_invalid_unused() -> None:
-    message = ASN1["BIT_STRING"]
+    message = ASN1["UNTAGGED_BIT_STRING"]
     with pytest.raises(ValueError):
         message.parse(bytes([0x04, 0x06, 0x6E, 0x5D, 0xC1]))
 
