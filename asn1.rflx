@@ -238,7 +238,23 @@ package ASN1 is
          T : UNTAGGED_INTEGER;
       end message;
 
+   type UNTAGGED_PrintableString is
+      message
+         Length : Length
+            then Value
+               with Length => 8 * Length;
+         Value : Opaque;
+      end message;
+
    type PrintableString is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_PrintableString;
+         T : UNTAGGED_PrintableString;
+      end message;
+
+   type UNTAGGED_UTF8String is
       message
          Length : Length
             then Value
@@ -248,10 +264,10 @@ package ASN1 is
 
    type UTF8String is
       message
-         Length : Length
-            then Value
-               with Length => 8 * Length;
-         Value : Opaque;
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_UTF8String;
+         T : UNTAGGED_UTF8String;
       end message;
 
 end ASN1;
