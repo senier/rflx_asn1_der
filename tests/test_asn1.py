@@ -297,10 +297,18 @@ def test_parse_strings() -> None:
 
 
 def test_parse_boolean() -> None:
-    message = ASN1["BOOL"]
+    message = ASN1["UNTAGGED_BOOL"]
     message.parse(bytes([1, 0]))
     assert message.get("Value") == "B_FALSE"
     message.parse(bytes([1, 0xFF]))
     assert message.get("Value") == "B_TRUE"
     with pytest.raises(ValueError):
         message.parse(bytes([1, 0x14]))
+
+    message = ASN1["BOOL"]
+    message.parse(bytes([1, 1, 0]))
+    assert message.get("T_Value") == "B_FALSE"
+    message.parse(bytes([1, 1, 0xFF]))
+    assert message.get("T_Value") == "B_TRUE"
+    with pytest.raises(ValueError):
+        message.parse(bytes([1, 1, 0x14]))

@@ -131,12 +131,20 @@ package ASN1 is
       end message;
 
    type Bool_Value is (B_FALSE => 0, B_TRUE => 16#FF#) with Size => 8;
-   type BOOL is
+   type UNTAGGED_BOOL is
       message
          Length : Length
             then Value
                if Length = 1;
          Value : Bool_Value;
+      end message;
+
+   type BOOL is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_BOOLEAN;
+         T : UNTAGGED_BOOL;
       end message;
 
    type BIT_STRING is
