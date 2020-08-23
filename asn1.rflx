@@ -167,12 +167,20 @@ package ASN1 is
          T : UNTAGGED_BIT_STRING;
       end message;
 
-   type OCTET_STRING is
+   type UNTAGGED_OCTET_STRING is
       message
          Length : Length
             then Value
                with Length => 8 * Length;
          Value : Byte_Array;
+      end message;
+
+   type OCTET_STRING is
+      message
+         Tag : Tag
+            then T
+               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_OCTET_STRING;
+         T : UNTAGGED_OCTET_STRING;
       end message;
 
    type OBJECT_IDENTIFIER is

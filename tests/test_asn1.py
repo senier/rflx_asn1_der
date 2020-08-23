@@ -49,9 +49,15 @@ def test_parse_bit_string_invalid_unused() -> None:
 
 
 def test_parse_octet_string() -> None:
-    message = ASN1["OCTET_STRING"]
+    message = ASN1["UNTAGGED_OCTET_STRING"]
     message.parse(bytes([0x04, 0x03, 0x02, 0x06, 0xA0]))
     data = message.get("Value")
+    assert isinstance(data, list)
+    assert [d.value for d in data] == [0x03, 0x02, 0x06, 0xA0]
+
+    message = ASN1["OCTET_STRING"]
+    message.parse(bytes([0x04, 0x04, 0x03, 0x02, 0x06, 0xA0]))
+    data = message.get("T_Value")
     assert isinstance(data, list)
     assert [d.value for d in data] == [0x03, 0x02, 0x06, 0xA0]
 
