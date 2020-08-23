@@ -73,7 +73,7 @@ package ASN1 is
          L : Digit;
       end message;
 
-   type UTCTime is
+   type Base_Time is
       message
          Year : Number;
          Month : Number
@@ -97,76 +97,97 @@ package ASN1 is
          Zulu : Zulu;
       end message;
 
-   type GeneralizedTime is
+   type UTCTime is
       message
-         G_Century : Number;
-         G : UTCTime;
+         Length : Length
+            then U
+               if Length = 13;
+         U : Base_Time;
       end message;
 
-   type Bool is (B_FALSE => 0, B_TRUE => 16#FF#) with Size => 8;
-
-   type Message is
+   type GeneralizedTime is
       message
-         Tag    : Tag;
          Length : Length
-            then Bool
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_BOOLEAN
-                  and Length = 1
-            then Integer
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_INTEGER
-                  and Length = 1
-            then Unused
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_BIT_STRING
-            then Data
-               with Length => 8 * Length
-               if Tag_Class = Cl_Universal
-                  and (Tag_Universal = UT_OCTET_STRING
-                       or Tag_Universal = UT_SEQUENCE
-                       or Tag_Universal = UT_SET
-                        -- Handled as Opaque and not checked for compliance for now
-                        -- ISSUE: Componolit/RecordFlux#78
-                       or Tag_Universal = UT_UTF8String
-                       or Tag_Universal = UT_PrintableString
-                       or Tag_Universal = UT_IA5String)
-            then null
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_NULL
-                  and Length = 0
-            then Data
-               -- Handled as Opaque for now
-               -- ISSUE: Componolit/RecordFlux#401
-               -- ISSUE: Componolit/RecordFlux#8
-               with Length => 8 * Length
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_OBJECT_IDENTIFIER
-            then UTCTime
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_UTCTime
-                  and Length = 13
-            then GeneralizedTime
-               if Tag_Class = Cl_Universal
-                  and Tag_Universal = UT_GeneralizedTime
-                  and Length = 15;
-         Bool : Bool
-            then null;
-         Integer : Integer_Chunk
-            then null;
+            then G_Century
+               if Length = 15;
+         G_Century : Number;
+         G : Base_Time;
+      end message;
+
+   type Bool_Value is (B_FALSE => 0, B_TRUE => 16#FF#) with Size => 8;
+   type BOOL is
+      message
+         Length : Length
+            then Value
+               if Length = 1;
+         Value : Bool_Value;
+      end message;
+
+   type BIT_STRING is
+      message
+         Length : Length;
          Unused : Unused
-            then Data
+            then Value
                with Length => 8 * (Length - 1)
                if Length > 1
             then null
-               --  Are BIT STRINGs allowed to have zero length?
                if Length = 1;
-         Data : Byte_Array
+         Value : Byte_Array;
+      end message;
+
+   type OCTET_STRING is
+      message
+         Length : Length
+            then Value
+               with Length => 8 * Length;
+         Value : Byte_Array;
+      end message;
+
+   type OBJECT_IDENTIFIER is
+      message
+         Length : Length
+            then Value
+               -- Handled as Opaque for now
+               -- ISSUE: Componolit/RecordFlux#401
+               -- ISSUE: Componolit/RecordFlux#8
+               with Length => 8 * Length;
+         Value : Byte_Array;
+      end message;
+
+   type NUL is
+      message
+         Length : Length
+            then null
+               if Length = 0;
+      end message;
+
+   type INTEGER is
+      message
+         Length : Length
+            then Integer
+               if Length = 1
+            then Raw
+               with Length => 8 * Length
+               if Length > 1;
+         Integer : Integer_Chunk
             then null;
-         UTCTime : UTCTime
-            then null;
-         GeneralizedTime : GeneralizedTime
-            then null;
+         Raw : Opaque;
+      end message;
+
+   type PrintableString is
+      message
+         Length : Length
+            then Value
+               with Length => 8 * Length;
+         Value : Opaque;
+      end message;
+
+   type UTF8String is
+      message
+         Length : Length
+            then Value
+               with Length => 8 * Length;
+         Value : Opaque;
       end message;
 
 end ASN1;
