@@ -254,3 +254,11 @@ def test_parse_boolean() -> None:
     assert message.get("Bool") == "B_TRUE"
     with pytest.raises(ValueError):
         message.parse(bytes([1, 1, 0x14]))
+
+
+def test_parse_bit_string() -> None:
+    message = ASN1["BIT_STRING"]
+    message.parse(bytes([3, 4, 0, 1, 2, 3]))
+    data = message.get("Data")
+    assert isinstance(data, list)
+    assert [d.value for d in data] == [1, 2, 3]
