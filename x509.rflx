@@ -67,6 +67,24 @@ package X509 is
 
    type CertificateSerialNumber is new ASN1.INTEGER;
 
+   type Time is
+      message
+         tag : ASN1.Tag
+            then utcTime
+               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_UTCTime
+            then generalizedTime
+               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_GeneralizedTime;
+         utcTime : ASN1.UNTAGGED_UTCTime
+            then null;
+         generalizedTime : ASN1.UNTAGGED_GeneralizedTime;
+      end message;
+
+   type Validity is
+      message
+         notBefore : Time;
+         notAfter : Time;
+      end message;
+
    type TBSCertificate is
       message
          version_tag : ASN1.Tag
@@ -79,6 +97,7 @@ package X509 is
          serialNumber : CertificateSerialNumber;
          signature : AlgorithmIdentifier;
          issuer : Name;
+         --  validity : Validity;
       end message;
 
    type Certificate is
