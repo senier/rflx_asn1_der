@@ -85,6 +85,12 @@ package X509 is
          notAfter : Time;
       end message;
 
+   type SubjectPublicKeyInfo is
+      message
+         algorithm : AlgorithmIdentifier;
+         subjectPublicKey : ASN1.BIT_STRING;
+      end message;
+
    type TBSCertificate is
       message
          version_tag : ASN1.Tag
@@ -97,7 +103,9 @@ package X509 is
          serialNumber : CertificateSerialNumber;
          signature : AlgorithmIdentifier;
          issuer : Name;
-         --  validity : Validity;
+         validity : Validity;
+         subject : Name;
+         subjectPublicKeyInfo : SubjectPublicKeyInfo;
       end message;
 
    type Certificate is
