@@ -4,14 +4,14 @@ package X509 is
 
    type AlgorithmIdentifier is
       message
-         algorithm  : ASN1.OBJECT_IDENTIFIER;
-         parameters : ASN1.NUL;
+         algorithm  : ASN1::OBJECT_IDENTIFIER;
+         parameters : ASN1::NUL;
       end message;
 
    type Version_Value is (v1 => 0, v2 => 1, v3 => 2) with Size => 8;
    type Version is
       message
-         Length : ASN1.Length
+         Length : ASN1::Length
             then Value
                if Length = 1;
          Value : Version_Value;
@@ -19,44 +19,44 @@ package X509 is
 
    type AttributeValue is
       message
-         tag : ASN1.Tag
+         tag : ASN1::Tag
             then printableString
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_PrintableString
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_PrintableString
             then utf8String
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_UTF8String;
-         printableString : ASN1.PrintableString
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_UTF8String;
+         printableString : ASN1::PrintableString
             then null;
-         utf8String : ASN1.UTF8String;
+         utf8String : ASN1::UTF8String;
       end message;
 
    type AttributeTypeAndValue is
       message
-         typ : ASN1.OBJECT_IDENTIFIER;
+         typ : ASN1::OBJECT_IDENTIFIER;
          value : AttributeValue;
       end message;
 
    -- ISSUE: set with at least one element
-   type RelativeDistinguishedNameValue is array of AttributeTypeAndValue;
+   type RelativeDistinguishedNameValue is sequence of AttributeTypeAndValue;
    type RelativeDistinguishedName is
       message
-         tag : ASN1.Tag
+         tag : ASN1::Tag
             then length
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_SET;
-         length : ASN1.Length
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_SET;
+         length : ASN1::Length
             then value
-               with Length => length;
+               with Size => length;
          value : RelativeDistinguishedNameValue;
       end message;
 
-   type RDNSequenceValue is array of RelativeDistinguishedName;
+   type RDNSequenceValue is sequence of RelativeDistinguishedName;
    type RDNSequence is
       message
-         tag : ASN1.Tag
+         tag : ASN1::Tag
             then length
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_SEQUENCE;
-         length : ASN1.Length
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_SEQUENCE;
+         length : ASN1::Length
             then value
-               with Length => length;
+               with Size => length;
          value : RDNSequenceValue;
       end message;
 
@@ -65,18 +65,18 @@ package X509 is
          rdnSequence : RDNSequence;
       end message;
 
-   type CertificateSerialNumber is new ASN1.INTEGER;
+   type CertificateSerialNumber is new ASN1::INTEGER;
 
    type Time is
       message
-         tag : ASN1.Tag
+         tag : ASN1::Tag
             then utcTime
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_UTCTime
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_UTCTime
             then generalizedTime
-               if tag_Class = ASN1.Cl_Universal and tag_Universal = ASN1.UT_GeneralizedTime;
-         utcTime : ASN1.UNTAGGED_UTCTime
+               if tag_Class = ASN1::Cl_Universal and tag_Universal = ASN1::UT_GeneralizedTime;
+         utcTime : ASN1::UNTAGGED_UTCTime
             then null;
-         generalizedTime : ASN1.UNTAGGED_GeneralizedTime;
+         generalizedTime : ASN1::UNTAGGED_GeneralizedTime;
       end message;
 
    type Validity is
@@ -88,17 +88,17 @@ package X509 is
    type SubjectPublicKeyInfo is
       message
          algorithm : AlgorithmIdentifier;
-         subjectPublicKey : ASN1.BIT_STRING;
+         subjectPublicKey : ASN1::BIT_STRING;
       end message;
 
    type TBSCertificate is
       message
-         version_tag : ASN1.Tag
+         version_tag : ASN1::Tag
             then version
-               if version_tag_Class = ASN1.Cl_Context_Specific and version_tag_Raw = 0
+               if version_tag_Class = ASN1::Cl_Context_Specific and version_tag_Raw = 0
             then serialNumber
                with First => version_tag_Class'First
-               if version_tag_Class /= ASN1.Cl_Context_Specific or version_tag_Raw /= 0;
+                  if version_tag_Class /= ASN1::Cl_Context_Specific;
          version : Version;
          serialNumber : CertificateSerialNumber;
          signature : AlgorithmIdentifier;
@@ -112,7 +112,7 @@ package X509 is
       message
          tbsCertificate     : TBSCertificate;
          signatureAlgorithm : AlgorithmIdentifier;
-         signature          : ASN1.BIT_STRING;
+         signature          : ASN1::BIT_STRING;
       end message;
 
 end X509;

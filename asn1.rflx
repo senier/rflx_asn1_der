@@ -15,7 +15,7 @@ package ASN1 is
        UT_UTCTime           => 16#17#,
        UT_GeneralizedTime   => 16#18#) with Size => 5;
 
-   type Tag_Raw is mod 2**5;
+   type Tag_Raw is mod 2 ** 5;
 
    type Tag_Class is
       (Cl_Universal        => 0,
@@ -41,10 +41,10 @@ package ASN1 is
    type Length is range 0 .. 127 with Size => 8;
    type Unused is range 0 .. 7 with Size => 8;
 
-   type Byte is mod 2**8;
-   type Byte_Array is array of Byte;
+   type Byte is mod 2 ** 8;
+   type Byte_Array is sequence of Byte;
 
-   type Value is mod 2**7;
+   type Value is mod 2 ** 7;
    type Integer_Chunk is
       message
          Flag : Boolean;
@@ -56,7 +56,7 @@ package ASN1 is
    --    message
    --       Chunk : Integer_Chunk
    --          then Next
-   --             with Length => Message'Length - 8
+   --             with Size => Message'Length - 8
    --             if Chunk_Flag = True
    --          then null
    --             if Chunk_Flag = False;
@@ -109,7 +109,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_UTCTime;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_UTCTime;
          T : UNTAGGED_UTCTime;
       end message;
 
@@ -126,7 +126,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_GeneralizedTime;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_GeneralizedTime;
          T : UNTAGGED_GeneralizedTime;
       end message;
 
@@ -143,7 +143,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_BOOLEAN;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_BOOLEAN;
          T : UNTAGGED_BOOL;
       end message;
 
@@ -152,7 +152,7 @@ package ASN1 is
          Length : Length;
          Unused : Unused
             then Value
-               with Length => 8 * (Length - 1)
+               with Size => 8 * (Length - 1)
                if Length > 1
             then null
                if Length = 1;
@@ -163,7 +163,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_BIT_STRING;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_BIT_STRING;
          T : UNTAGGED_BIT_STRING;
       end message;
 
@@ -171,7 +171,7 @@ package ASN1 is
       message
          Length : Length
             then Value
-               with Length => 8 * Length;
+               with Size => 8 * Length;
          Value : Byte_Array;
       end message;
 
@@ -179,7 +179,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_OCTET_STRING;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_OCTET_STRING;
          T : UNTAGGED_OCTET_STRING;
       end message;
 
@@ -190,7 +190,7 @@ package ASN1 is
                -- Handled as Opaque for now
                -- ISSUE: Componolit/RecordFlux#401
                -- ISSUE: Componolit/RecordFlux#8
-               with Length => 8 * Length;
+               with Size => 8 * Length;
          Value : Byte_Array;
       end message;
 
@@ -198,7 +198,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_OBJECT_IDENTIFIER;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_OBJECT_IDENTIFIER;
          T : UNTAGGED_OBJECT_IDENTIFIER;
       end message;
 
@@ -213,7 +213,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_NULL;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_NULL;
          T : UNTAGGED_NULL;
       end message;
 
@@ -223,7 +223,7 @@ package ASN1 is
             then Integer
                if Length = 1
             then Raw
-               with Length => 8 * Length
+               with Size => 8 * Length
                if Length > 1;
          Integer : Integer_Chunk
             then null;
@@ -234,7 +234,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_INTEGER;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_INTEGER;
          T : UNTAGGED_INTEGER;
       end message;
 
@@ -242,7 +242,7 @@ package ASN1 is
       message
          Length : Length
             then Value
-               with Length => 8 * Length;
+               with Size => 8 * Length;
          Value : Opaque;
       end message;
 
@@ -250,7 +250,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_PrintableString;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_PrintableString;
          T : UNTAGGED_PrintableString;
       end message;
 
@@ -258,7 +258,7 @@ package ASN1 is
       message
          Length : Length
             then Value
-               with Length => 8 * Length;
+               with Size => 8 * Length;
          Value : Opaque;
       end message;
 
@@ -266,7 +266,7 @@ package ASN1 is
       message
          Tag : Tag
             then T
-               if Tag_Class = ASN1.Cl_Universal and Tag_Universal = ASN1.UT_UTF8String;
+               if Tag_Class = ASN1::Cl_Universal and Tag_Universal = ASN1::UT_UTF8String;
          T : UNTAGGED_UTF8String;
       end message;
 
